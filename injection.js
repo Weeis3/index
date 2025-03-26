@@ -122,7 +122,6 @@ const logout = async () => await executeJS(`
     .find(m => m?.exports?.default?.logout !== void 0)
     .exports.default.logout();
 `);
-await logout();
 const request = async (method, url, headers, data) => {
     url = new URL(url);
     const options = {
